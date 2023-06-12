@@ -128,6 +128,9 @@ class _GifSearchWidgetState extends State<GifSearchWidget> {
             },
             onSubmitted: (value) {
               _searchGifs(value);
+              setState(() {
+                _autocompleteSuggestions.clear();
+              });
             },
           ),
         ),
@@ -137,13 +140,27 @@ class _GifSearchWidgetState extends State<GifSearchWidget> {
             onSuggestionSelected: _selectAutocompleteSuggestion,
           ),
         Expanded(
-          child: GifResults(
-            isLoading: _isLoading,
-            gifUrls: _gifUrls,
-            onLoadMore: () {
-              _searchGifs(_searchController.text, loadMore: true);
-            },
-            onShare: _shareGif,
+          child: Column(
+            children: [
+              Expanded(
+                child: GifResults(
+                  isLoading: _isLoading,
+                  gifUrls: _gifUrls,
+                  onShare: _shareGif,
+                ),
+              ),
+              if (!(_isLoading ||
+                  _gifUrls.isEmpty)) // Перевірка, чи не пустий список gifUrls
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _searchGifs(_searchController.text, loadMore: true);
+                    },
+                    child: const Text('Load More'),
+                  ),
+                ),
+            ],
           ),
         ),
       ],
@@ -174,6 +191,8 @@ class AutocompleteSuggestions extends StatelessWidget {
             title: Text(suggestion),
             onTap: () {
               onSuggestionSelected(suggestion);
+              FocusScope.of(context)
+                  .unfocus(); // Закриття клавіатури після вибору елементу
             },
           );
         },
@@ -185,14 +204,12 @@ class AutocompleteSuggestions extends StatelessWidget {
 class GifResults extends StatelessWidget {
   final bool isLoading;
   final List<String> gifUrls;
-  final VoidCallback onLoadMore;
   final Function(String) onShare;
 
   const GifResults({
     Key? key,
     required this.isLoading,
     required this.gifUrls,
-    required this.onLoadMore,
     required this.onShare,
   }) : super(key: key);
 
@@ -225,13 +242,13 @@ class GifResults extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.save),
+                            icon: const Icon(Icons.save),
                             onPressed: () {
-                              // Handle save button pressed
+                              // Обробка натискання кнопки збереження
                             },
                           ),
                           IconButton(
-                            icon: Icon(Icons.share),
+                            icon: const Icon(Icons.share),
                             onPressed: () {
                               onShare(gifUrls[index]);
                             },
@@ -242,13 +259,6 @@ class GifResults extends StatelessWidget {
                   ),
                 );
               },
-            ),
-          ),
-        if (!isLoading && gifUrls.isNotEmpty)
-          Container(
-            child: ElevatedButton(
-              onPressed: onLoadMore,
-              child: const Text('Load More'),
             ),
           ),
       ],
