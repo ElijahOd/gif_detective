@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.save),
-              label: 'Save',
+              label: 'Saved',
             ),
           ],
         ),
