@@ -4,8 +4,20 @@ import 'package:flutterfunmemes/save.dart';
 
 void main() => runApp(const MyApp());
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    const GifSearchWidget(),
+    const SavesPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +25,25 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Fun Memes',
       home: Scaffold(
         appBar: AppBar(title: const Text('GIF`s Detective by OD')),
-        bottomNavigationBar: BottomAppBar(
-          child: FloatingActionButton(
-            backgroundColor: Colors.blue,
-            child: const Icon(Icons.save),
-            onPressed: () {
-              // Handle home button pressed
-            },
-          ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: 'Search',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.save),
+              label: 'Save',
+            ),
+          ],
         ),
-        body: const GifSearchWidget(),
+        body: _screens[_currentIndex],
       ),
     );
   }
