@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:share_plus/share_plus.dart';
 
 const String apiKey = 'LIVDSRZULELA';
@@ -41,10 +41,10 @@ class _GifSearchWidgetState extends State<GifSearchWidget> {
         'https://g.tenor.com/v1/search?q=$query&key=$apiKey&limit=$pageSize&pos=$offset';
 
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await Dio().get(url);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data;
         final results = data['results'] as List<dynamic>;
 
         for (var result in results) {
@@ -74,10 +74,10 @@ class _GifSearchWidgetState extends State<GifSearchWidget> {
         'https://g.tenor.com/v1/autocomplete?q=$query&key=$apiKey&limit=$autocompleteLimit';
 
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await Dio().get(url);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data;
         final suggestions = data['results'] as List<dynamic>;
 
         return suggestions.cast<String>();
