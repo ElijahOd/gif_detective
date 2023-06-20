@@ -19,9 +19,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.3
-  share_plus: ^3.0.4
+  dio: ^5.2.1
+  share_plus: ^7.0.2
   sqflite: ^2.2.8+4
+  shared_preferences: ^2.1.2
 
 dev_dependencies:
   flutter_test:
